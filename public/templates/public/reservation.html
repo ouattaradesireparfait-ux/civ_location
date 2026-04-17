@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réservation — {{ vehicule.marque }} {{ vehicule.modele }}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#f5f6fa;color:#333}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:15px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.6rem;font-weight:800;text-decoration:none;color:#fff}.logo span{color:#f39c12}
+nav a{color:#ddd;text-decoration:none;margin-left:20px;font-size:.9rem}nav a:hover{color:#f39c12}
+.container{max-width:900px;margin:30px auto;padding:0 20px;display:grid;grid-template-columns:2fr 1fr;gap:25px}
+h1{font-size:1.5rem;font-weight:800;color:#1a1a2e;margin-bottom:25px;grid-column:1/-1}
+.form-card{background:#fff;border-radius:12px;padding:30px;box-shadow:0 3px 15px rgba(0,0,0,.08)}
+.section-titre{font-size:1rem;font-weight:700;color:#1a1a2e;border-bottom:2px solid #f39c12;padding-bottom:8px;margin-bottom:20px}
+.groupe{margin-bottom:18px}
+label{display:block;font-size:.85rem;font-weight:600;color:#555;margin-bottom:6px}
+input,select{width:100%;padding:11px 14px;border:2px solid #e0e0e0;border-radius:8px;font-size:.95rem;transition:border-color .2s}
+input:focus,select:focus{outline:none;border-color:#f39c12}
+.deux-cols{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.upload-zone{border:2px dashed #ddd;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;background:#fafafa}
+.upload-zone:hover{border-color:#f39c12}
+.upload-zone i{font-size:1.5rem;color:#bbb;display:block;margin-bottom:8px}
+.upload-zone p{font-size:.85rem;color:#888}
+.upload-zone input[type=file]{display:none}
+.preview{max-width:100%;max-height:120px;border-radius:6px;margin-top:8px;display:none}
+.erreurs{background:#ffeaea;border:1px solid #f5c6cb;border-radius:8px;padding:15px;margin-bottom:20px}
+.erreurs li{color:#721c24;font-size:.9rem;margin-left:20px;margin-top:4px}
+.erreurs strong{color:#721c24}
+.btn-submit{width:100%;background:#f39c12;color:#fff;border:none;padding:14px;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:background .2s;margin-top:10px}
+.btn-submit:hover{background:#e08e0b}
+.resume{background:#fff;border-radius:12px;padding:20px;box-shadow:0 3px 15px rgba(0,0,0,.08);height:fit-content;position:sticky;top:20px}
+.resume h3{font-size:1rem;font-weight:700;margin-bottom:15px;color:#1a1a2e;border-bottom:2px solid #f39c12;padding-bottom:8px}
+.resume-veh{font-weight:700;font-size:1.05rem;margin-bottom:5px}
+.resume-info{font-size:.85rem;color:#666;margin-bottom:4px}
+.resume-prix{font-size:1.4rem;font-weight:800;color:#f39c12;margin:15px 0 5px}
+.paiement-info{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px;font-size:.85rem;margin-top:15px}
+.total-calc{background:#1a1a2e;color:#fff;border-radius:8px;padding:12px;text-align:center;margin-top:10px;font-size:.9rem;display:none}
+footer{background:#1a1a2e;color:#aaa;text-align:center;padding:25px;margin-top:40px}
+footer a{color:#f39c12;text-decoration:none}
+@media(max-width:768px){.container{grid-template-columns:1fr}.deux-cols{grid-template-columns:1fr}.resume{position:static}}
+
+footer{background:#1a1a2e;color:#aaa;margin-top:50px}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;padding:40px;max-width:1200px;margin:0 auto}
+.footer-brand .footer-logo{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px}
+.footer-brand .footer-logo span{color:#f39c12}
+.footer-brand p{font-size:.85rem;line-height:1.7;color:#888}
+.footer-links h4,.footer-contact h4{color:#fff;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.footer-links a,.footer-contact a{display:flex;align-items:center;gap:8px;color:#888;text-decoration:none;font-size:.85rem;margin-bottom:8px;transition:color .2s}
+.footer-links a:hover,.footer-contact a:hover{color:#f39c12}
+.footer-links a i,.footer-contact a i{width:14px;color:#f39c12}
+.footer-contact .wa-link{color:#25d366 !important}
+.footer-contact .wa-link i{color:#25d366 !important}
+.footer-contact .wa-link:hover{color:#1ebe57 !important}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:18px 40px;text-align:center;font-size:.82rem;color:#555}
+@media(max-width:768px){.footer-main{grid-template-columns:1fr;gap:25px;padding:25px}}
+
+
+.whatsapp-float{position:fixed;bottom:28px;right:28px;background:#25d366;color:#fff;border-radius:50%;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.5);z-index:9999;transition:transform .2s,box-shadow .2s;animation:pulse-wa 2.5s infinite}
+.whatsapp-float:hover{transform:scale(1.12);box-shadow:0 6px 28px rgba(37,211,102,.7)}
+@keyframes pulse-wa{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8)}}
+
+</style>
+</head>
+<body>
+<header>
+  <a href="{% url 'accueil' %}" class="logo">CIV<span>Location</span></a>
+  <nav>
+    <a href="{% url 'detail_vehicule' vehicule.pk %}"><i class="fas fa-arrow-left"></i> Retour au véhicule</a>
+  </nav>
+</header>
+<div class="container">
+  <h1><i class="fas fa-calendar-check"></i> Formulaire de réservation</h1>
+
+  <div class="form-card">
+    {% if erreurs %}
+    <div class="erreurs">
+      <strong><i class="fas fa-exclamation-triangle"></i> Veuillez corriger les erreurs suivantes :</strong>
+      <ul>{% for e in erreurs %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="section-titre"><i class="fas fa-user"></i> Informations personnelles</div>
+      <div class="deux-cols">
+        <div class="groupe"><label>Nom *</label><input type="text" name="nom" value="{{ post.nom|default:'' }}" required placeholder="Votre nom"></div>
+        <div class="groupe"><label>Prénom *</label><input type="text" name="prenom" value="{{ post.prenom|default:'' }}" required placeholder="Votre prénom"></div>
+      </div>
+      <div class="deux-cols">
+        <div class="groupe"><label>Email *</label><input type="email" name="email" value="{{ post.email|default:'' }}" required placeholder="votre@email.com"></div>
+        <div class="groupe"><label>Téléphone *</label><input type="tel" name="telephone" value="{{ post.telephone|default:'' }}" required placeholder="+225 XX XX XX XX XX"></div>
+      </div>
+
+      <div class="section-titre"><i class="fas fa-calendar"></i> Dates de location</div>
+      <div class="deux-cols">
+        <div class="groupe"><label>Date de début *</label><input type="date" name="date_debut" value="{{ post.date_debut|default:'' }}" id="date-debut" required onchange="calcTotal()"></div>
+        <div class="groupe"><label>Date de fin *</label><input type="date" name="date_fin" value="{{ post.date_fin|default:'' }}" id="date-fin" required onchange="calcTotal()"></div>
+      </div>
+      <div class="total-calc" id="total-calc"></div>
+
+      <div class="groupe">
+        <label><i class="fas fa-map-marker-alt" style="color:#f39c12"></i> Lieu de prise en charge *</label>
+        <input type="text" name="lieu_prise_en_charge" value="{{ post.lieu_prise_en_charge|default:'' }}" required placeholder="Ex : Cocody, Plateau, Aéroport FHB...">
+      </div>
+
+      <div class="section-titre"><i class="fas fa-id-card"></i> Documents obligatoires</div>
+      <div class="groupe">
+        <label>CNI Recto *</label>
+        <div class="upload-zone" onclick="document.getElementById('cni_recto').click()">
+          <i class="fas fa-camera"></i>
+          <p>Cliquez pour choisir la photo recto de votre CNI</p>
+          <input type="file" id="cni_recto" name="cni_recto" accept="image/*" onchange="preview(this,'prev-recto')" required>
+          <img id="prev-recto" class="preview">
+        </div>
+      </div>
+      <div class="groupe">
+        <label>CNI Verso *</label>
+        <div class="upload-zone" onclick="document.getElementById('cni_verso').click()">
+          <i class="fas fa-camera"></i>
+          <p>Cliquez pour choisir la photo verso de votre CNI</p>
+          <input type="file" id="cni_verso" name="cni_verso" accept="image/*" onchange="preview(this,'prev-verso')" required>
+          <img id="prev-verso" class="preview">
+        </div>
+      </div>
+      <div class="groupe">
+        <label>Permis de conduire *</label>
+        <div class="upload-zone" onclick="document.getElementById('permis').click()">
+          <i class="fas fa-car"></i>
+          <p>Cliquez pour choisir la photo de votre permis</p>
+          <input type="file" id="permis" name="permis_conduire" accept="image/*" onchange="preview(this,'prev-permis')" required>
+          <img id="prev-permis" class="preview">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Envoyer ma demande de réservation</button>
+    </form>
+  </div>
+
+  <div class="resume">
+    <h3><i class="fas fa-receipt"></i> Résumé</h3>
+    <div class="resume-veh">{{ vehicule.marque }} {{ vehicule.modele }} {{ vehicule.annee }}</div>
+    <div class="resume-info"><i class="fas fa-building"></i> {{ vehicule.partenaire.nom_agence }}</div>
+    <div class="resume-info"><i class="fas fa-map-marker-alt"></i> {{ vehicule.localisation }}</div>
+    <div class="resume-info"><i class="fas fa-cog"></i> {{ vehicule.get_transmission_display }}</div>
+    <div class="resume-prix">{{ vehicule.prix_par_jour|floatformat:0 }} FCFA <small style="font-size:.7rem;color:#888;font-weight:400">/ jour</small></div>
+    <div class="paiement-info">
+      <i class="fas fa-money-bill-wave"></i> <strong>Paiement :</strong><br>
+      Cash à la livraison uniquement
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-logo">CIV<span>Location</span></div>
+      <p>Location de véhicules en Côte d'Ivoire.<br>Des partenaires de confiance, partout.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigation</h4>
+      <a href="/"><i class="fas fa-home"></i> Accueil</a>
+      <a href="/ma-reservation/"><i class="fas fa-search"></i> Ma réservation</a>
+      <a href="/devenir-partenaire/"><i class="fas fa-handshake"></i> Devenir partenaire</a>
+      <a href="/partenaire/connexion/"><i class="fas fa-user-tie"></i> Espace partenaire</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:franckyaboudou@gmail.com"><i class="fas fa-envelope"></i> franckyaboudou@gmail.com</a>
+      <a href="tel:+2250789923611"><i class="fas fa-phone"></i> +225 07 89 92 36 11</a>
+      <a href="https://wa.me/2250789923611" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CIV Location — Tous droits réservés</p>
+  </div>
+</footer>
+<script>
+function preview(input, previewId){
+  const prev=document.getElementById(previewId);
+  if(input.files&&input.files[0]){
+    const r=new FileReader();
+    r.onload=e=>{prev.src=e.target.result;prev.style.display='block'};
+    r.readAsDataURL(input.files[0]);
+  }
+}
+function calcTotal(){
+  const d1=document.getElementById('date-debut').value;
+  const d2=document.getElementById('date-fin').value;
+  const div=document.getElementById('total-calc');
+  if(d1&&d2){
+    const diff=Math.floor((new Date(d2)-new Date(d1))/(1000*60*60*24))+1;
+    if(diff>0){
+      const total=diff*{{ vehicule.prix_par_jour }};
+      div.style.display='block';
+      div.innerHTML='<i class="fas fa-calculator"></i> '+diff+' jour(s) × {{ vehicule.prix_par_jour|floatformat:0 }} FCFA = <strong>'+total.toLocaleString('fr-FR')+' FCFA</strong>';
+    } else {div.style.display='none';}
+  }
+}
+</script>
+<!-- Bouton WhatsApp flottant -->
+<a href="https://wa.me/2250789923611" target="_blank" class="whatsapp-float" title="Contactez-nous sur WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+</body>
+</html>

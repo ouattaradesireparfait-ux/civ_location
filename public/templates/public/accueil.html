@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIV Location — Location de véhicules en Côte d'Ivoire</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#f5f6fa;color:#333}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:15px 40px}
+.logo{font-size:1.8rem;font-weight:800;letter-spacing:1px}
+.logo span{color:#f39c12}
+nav a{color:#ddd;text-decoration:none;margin-left:20px;font-size:.95rem;transition:color .2s}
+nav a:hover{color:#f39c12}
+.hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;text-align:center;padding:60px 20px}
+.hero h1{font-size:2.5rem;margin-bottom:15px}
+.hero p{font-size:1.1rem;color:#bbb;margin-bottom:30px}
+.filtres{background:#fff;padding:25px 40px;box-shadow:0 2px 15px rgba(0,0,0,.08);border-bottom:3px solid #f39c12}
+.filtres form{display:flex;gap:15px;flex-wrap:wrap;align-items:flex-end}
+.filtres .groupe{display:flex;flex-direction:column;gap:5px;flex:1;min-width:180px}
+.filtres label{font-size:.8rem;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px}
+.filtres select,.filtres input{padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:.95rem;transition:border-color .2s}
+.filtres select:focus,.filtres input:focus{outline:none;border-color:#f39c12}
+.btn-filtre{background:#f39c12;color:#fff;border:none;padding:11px 25px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.95rem;white-space:nowrap}
+.btn-filtre:hover{background:#e08e0b}
+.btn-reset{background:#6c757d;color:#fff;border:none;padding:11px 20px;border-radius:8px;cursor:pointer;font-weight:600;font-size:.95rem;text-decoration:none;white-space:nowrap;display:inline-block}
+.container{max-width:1200px;margin:0 auto;padding:30px 20px}
+.section-titre{font-size:1.4rem;font-weight:700;margin-bottom:20px;color:#1a1a2e}
+.grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:25px}
+.carte{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 15px rgba(0,0,0,.08);transition:transform .2s,box-shadow .2s}
+.carte:hover{transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,.15)}
+.carte-img{height:200px;overflow:hidden;background:#eee;position:relative}
+.carte-img img{width:100%;height:100%;object-fit:cover}
+.carte-img .no-photo{display:flex;align-items:center;justify-content:center;height:100%;background:linear-gradient(135deg,#e0e0e0,#bbb);color:#888;font-size:2rem}
+.badge-dispo{position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700}
+.badge-dispo.disponible{background:#27ae60;color:#fff}
+.badge-dispo.indisponible{background:#e74c3c;color:#fff}
+.carte-corps{padding:18px}
+.carte-titre{font-size:1.1rem;font-weight:700;margin-bottom:5px;color:#1a1a2e}
+.carte-agence{font-size:.85rem;color:#888;margin-bottom:12px}
+.carte-infos{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.info-chip{display:flex;align-items:center;gap:5px;font-size:.82rem;color:#555;background:#f8f9fa;padding:4px 10px;border-radius:20px}
+.info-chip i{color:#f39c12}
+.carte-prix{display:flex;align-items:center;justify-content:space-between}
+.prix{font-size:1.3rem;font-weight:800;color:#f39c12}
+.prix span{font-size:.8rem;color:#888;font-weight:400}
+.btn-voir{background:#1a1a2e;color:#fff;text-decoration:none;padding:8px 18px;border-radius:8px;font-size:.9rem;font-weight:600;transition:background .2s}
+.btn-voir:hover{background:#f39c12}
+.aucun{text-align:center;padding:60px 20px;color:#888}
+.aucun i{font-size:3rem;margin-bottom:15px;display:block;color:#ddd}
+footer{background:#1a1a2e;color:#aaa;text-align:center;padding:30px;margin-top:50px}
+footer a{color:#f39c12;text-decoration:none}
+@media(max-width:768px){
+  .hero h1{font-size:1.8rem}
+  .filtres{padding:20px}
+  .filtres form{flex-direction:column}
+  .header-top{flex-direction:column;gap:10px;text-align:center}
+}
+
+footer{background:#1a1a2e;color:#aaa;margin-top:50px}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;padding:40px;max-width:1200px;margin:0 auto}
+.footer-brand .footer-logo{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px}
+.footer-brand .footer-logo span{color:#f39c12}
+.footer-brand p{font-size:.85rem;line-height:1.7;color:#888}
+.footer-links h4,.footer-contact h4{color:#fff;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.footer-links a,.footer-contact a{display:flex;align-items:center;gap:8px;color:#888;text-decoration:none;font-size:.85rem;margin-bottom:8px;transition:color .2s}
+.footer-links a:hover,.footer-contact a:hover{color:#f39c12}
+.footer-links a i,.footer-contact a i{width:14px;color:#f39c12}
+.footer-contact .wa-link{color:#25d366 !important}
+.footer-contact .wa-link i{color:#25d366 !important}
+.footer-contact .wa-link:hover{color:#1ebe57 !important}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:18px 40px;text-align:center;font-size:.82rem;color:#555}
+@media(max-width:768px){.footer-main{grid-template-columns:1fr;gap:25px;padding:25px}}
+
+
+.whatsapp-float{position:fixed;bottom:28px;right:28px;background:#25d366;color:#fff;border-radius:50%;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.5);z-index:9999;transition:transform .2s,box-shadow .2s;animation:pulse-wa 2.5s infinite}
+.whatsapp-float:hover{transform:scale(1.12);box-shadow:0 6px 28px rgba(37,211,102,.7)}
+@keyframes pulse-wa{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8)}}
+
+
+.carte-agence-wrap{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.logo-agence{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #f0f0f0;flex-shrink:0}
+.logo-agence-defaut{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f39c12,#e08e0b);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff;font-weight:700;flex-shrink:0}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <div class="logo">CIV<span>Location</span></div>
+    <nav>
+      <a href="{% url 'accueil' %}"><i class="fas fa-home"></i> Accueil</a>
+      <a href="{% url 'suivi_reservation' %}"><i class="fas fa-search"></i> Ma réservation</a>
+      <a href="{% url 'devenir_partenaire' %}"><i class="fas fa-handshake"></i> Devenir partenaire</a>
+    </nav>
+  </div>
+  <div class="hero">
+    <h1><i class="fas fa-car"></i> Location de véhicules en Côte d'Ivoire</h1>
+    <p>Trouvez le véhicule idéal parmi notre sélection de partenaires de confiance</p>
+  </div>
+</header>
+
+<div class="filtres">
+  <form method="get">
+    <div class="groupe">
+      <label>Type de véhicule</label>
+      <select name="type">
+        <option value="">Tous les types</option>
+        {% for val, lib in types %}
+        <option value="{{ val }}" {% if type_filtre == val %}selected{% endif %}>{{ lib }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="groupe">
+      <label>Prix max (FCFA/jour)</label>
+      <input type="number" name="prix_max" placeholder="Ex: 50000" value="{{ prix_max }}" min="0">
+    </div>
+    <div class="groupe">
+      <label>Localisation</label>
+      <input type="text" name="localisation" placeholder="Ville ou commune" value="{{ localisation }}">
+    </div>
+    <button type="submit" class="btn-filtre"><i class="fas fa-filter"></i> Filtrer</button>
+    {% if type_filtre or prix_max or localisation %}
+    <a href="{% url 'accueil' %}" class="btn-reset"><i class="fas fa-times"></i> Réinitialiser</a>
+    {% endif %}
+  </form>
+</div>
+
+<div class="container">
+  <div class="section-titre">
+    <i class="fas fa-car-side"></i>
+    {{ vehicules|length }} véhicule{{ vehicules|length|pluralize }} disponible{{ vehicules|length|pluralize }}
+  </div>
+
+  {% if vehicules %}
+  <div class="grille">
+    {% for v in vehicules %}
+    <div class="carte">
+      <div class="carte-img">
+        {% if v.photo_principale %}
+        <img src="{{ v.photo_principale.image.url }}" alt="{{ v.marque }} {{ v.modele }}">
+        {% else %}
+        <div class="no-photo"><i class="fas fa-car"></i></div>
+        {% endif %}
+        <span class="badge-dispo {% if v.disponible %}disponible{% else %}indisponible{% endif %}">
+          {% if v.disponible %}Disponible{% else %}Indisponible{% endif %}
+        </span>
+      </div>
+      <div class="carte-corps">
+        <div class="carte-titre">{{ v.marque }} {{ v.modele }} {{ v.annee }}</div>
+        <div class="carte-agence-wrap">
+          {% if v.partenaire.logo %}
+          <img src="{{ v.partenaire.logo.url }}" class="logo-agence" alt="{{ v.partenaire.nom_agence }}">
+          {% else %}
+          <div class="logo-agence-defaut">{{ v.partenaire.nom_agence|slice:":1"|upper }}</div>
+          {% endif %}
+          <span style="font-size:.85rem;color:#888;font-weight:500">{{ v.partenaire.nom_agence }}</span>
+        </div>
+        <div class="carte-infos">
+          <span class="info-chip"><i class="fas fa-users"></i> {{ v.nombre_places }} places</span>
+          <span class="info-chip"><i class="fas fa-cog"></i> {{ v.get_transmission_display }}</span>
+          {% if v.climatisation %}<span class="info-chip"><i class="fas fa-snowflake"></i> Clim</span>{% endif %}
+          <span class="info-chip"><i class="fas fa-map-marker-alt"></i> {{ v.localisation }}</span>
+        </div>
+        <div class="carte-prix">
+          <div class="prix">{{ v.prix_par_jour|floatformat:0 }} FCFA <span>/ jour</span></div>
+          <a href="{% url 'detail_vehicule' v.pk %}" class="btn-voir">Voir <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="aucun">
+    <i class="fas fa-search"></i>
+    <p>Aucun véhicule ne correspond à votre recherche.</p>
+    <br>
+    <a href="{% url 'accueil' %}" class="btn-voir" style="display:inline-block">Voir tous les véhicules</a>
+  </div>
+  {% endif %}
+</div>
+
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-logo">CIV<span>Location</span></div>
+      <p>Location de véhicules en Côte d'Ivoire.<br>Des partenaires de confiance, partout.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigation</h4>
+      <a href="/"><i class="fas fa-home"></i> Accueil</a>
+      <a href="/ma-reservation/"><i class="fas fa-search"></i> Ma réservation</a>
+      <a href="/devenir-partenaire/"><i class="fas fa-handshake"></i> Devenir partenaire</a>
+      <a href="/partenaire/connexion/"><i class="fas fa-user-tie"></i> Espace partenaire</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:franckyaboudou@gmail.com"><i class="fas fa-envelope"></i> franckyaboudou@gmail.com</a>
+      <a href="tel:+2250789923611"><i class="fas fa-phone"></i> +225 07 89 92 36 11</a>
+      <a href="https://wa.me/2250789923611" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CIV Location — Tous droits réservés</p>
+  </div>
+</footer>
+<!-- Bouton WhatsApp flottant -->
+<a href="https://wa.me/2250789923611" target="_blank" class="whatsapp-float" title="Contactez-nous sur WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+</body>
+</html>

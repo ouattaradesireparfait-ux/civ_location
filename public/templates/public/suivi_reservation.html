@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suivi de réservation — CIV Location</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#f5f6fa;color:#333;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:15px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.6rem;font-weight:800;text-decoration:none;color:#fff}.logo span{color:#f39c12}
+nav a{color:#ddd;text-decoration:none;margin-left:20px;font-size:.9rem}nav a:hover{color:#f39c12}
+.main{flex:1;padding:40px 20px}
+.container{max-width:700px;margin:0 auto}
+h1{font-size:1.6rem;font-weight:800;color:#1a1a2e;margin-bottom:25px}
+.search-card{background:#fff;border-radius:12px;padding:30px;box-shadow:0 3px 15px rgba(0,0,0,.08);margin-bottom:30px}
+.form-row{display:flex;gap:12px}
+input{flex:1;padding:12px 15px;border:2px solid #e0e0e0;border-radius:8px;font-size:.95rem;transition:border-color .2s}
+input:focus{outline:none;border-color:#f39c12}
+.btn-search{background:#f39c12;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:700;cursor:pointer;font-size:.95rem;white-space:nowrap}
+.btn-search:hover{background:#e08e0b}
+.resa-card{background:#fff;border-radius:12px;padding:25px;box-shadow:0 3px 15px rgba(0,0,0,.08);margin-bottom:15px;border-left:4px solid #ddd}
+.resa-card.en_attente{border-left-color:#ffc107}
+.resa-card.validee{border-left-color:#27ae60}
+.resa-card.refusee{border-left-color:#e74c3c}
+.resa-card.annulee{border-left-color:#6c757d}
+.resa-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+.resa-titre{font-weight:700;font-size:1.05rem;color:#1a1a2e}
+.badge-statut{padding:5px 14px;border-radius:20px;font-size:.82rem;font-weight:700}
+.badge-en_attente{background:#fff3cd;color:#856404}
+.badge-validee{background:#d4edda;color:#155724}
+.badge-refusee{background:#f8d7da;color:#721c24}
+.badge-annulee{background:#e2e3e5;color:#383d41}
+.badge-terminee{background:#d1ecf1;color:#0c5460}
+.resa-card.terminee{border-left-color:#17a2b8}
+.resa-detail{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;font-size:.87rem;color:#555}
+.resa-item{display:flex;align-items:center;gap:6px}
+.resa-item i{color:#f39c12;width:14px}
+.aucun{text-align:center;padding:40px;color:#888}
+.aucun i{font-size:2.5rem;display:block;margin-bottom:12px;color:#ddd}
+footer{background:#1a1a2e;color:#aaa;text-align:center;padding:20px;margin-top:auto}
+footer a{color:#f39c12;text-decoration:none}
+@media(max-width:500px){.form-row{flex-direction:column}}
+
+footer{background:#1a1a2e;color:#aaa;margin-top:50px}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;padding:40px;max-width:1200px;margin:0 auto}
+.footer-brand .footer-logo{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px}
+.footer-brand .footer-logo span{color:#f39c12}
+.footer-brand p{font-size:.85rem;line-height:1.7;color:#888}
+.footer-links h4,.footer-contact h4{color:#fff;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.footer-links a,.footer-contact a{display:flex;align-items:center;gap:8px;color:#888;text-decoration:none;font-size:.85rem;margin-bottom:8px;transition:color .2s}
+.footer-links a:hover,.footer-contact a:hover{color:#f39c12}
+.footer-links a i,.footer-contact a i{width:14px;color:#f39c12}
+.footer-contact .wa-link{color:#25d366 !important}
+.footer-contact .wa-link i{color:#25d366 !important}
+.footer-contact .wa-link:hover{color:#1ebe57 !important}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:18px 40px;text-align:center;font-size:.82rem;color:#555}
+@media(max-width:768px){.footer-main{grid-template-columns:1fr;gap:25px;padding:25px}}
+
+
+.whatsapp-float{position:fixed;bottom:28px;right:28px;background:#25d366;color:#fff;border-radius:50%;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.5);z-index:9999;transition:transform .2s,box-shadow .2s;animation:pulse-wa 2.5s infinite}
+.whatsapp-float:hover{transform:scale(1.12);box-shadow:0 6px 28px rgba(37,211,102,.7)}
+@keyframes pulse-wa{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8)}}
+
+</style>
+</head>
+<body>
+<header>
+  <a href="{% url 'accueil' %}" class="logo">CIV<span>Location</span></a>
+  <nav><a href="{% url 'accueil' %}"><i class="fas fa-home"></i> Accueil</a></nav>
+</header>
+<div class="main">
+<div class="container">
+  <h1><i class="fas fa-search"></i> Suivi de réservation</h1>
+  <div class="search-card">
+    <p style="margin-bottom:15px;color:#666">Entrez votre email ou numéro de téléphone pour retrouver vos réservations.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <input type="text" name="recherche" placeholder="Email ou téléphone" value="{{ recherche }}" required>
+        <button type="submit" class="btn-search"><i class="fas fa-search"></i> Rechercher</button>
+      </div>
+    </form>
+  </div>
+
+  {% if recherche %}
+    {% if reservations %}
+      <p style="margin-bottom:15px;color:#666;font-size:.9rem">{{ reservations|length }} réservation(s) trouvée(s)</p>
+      {% for r in reservations %}
+      <div class="resa-card {% if r.statut == 'validee' and r.date_fin < today %}terminee{% else %}{{ r.statut }}{% endif %}">
+        <div class="resa-header">
+          <div>
+            <div class="resa-titre">{{ r.vehicule.marque }} {{ r.vehicule.modele }} {{ r.vehicule.annee }}</div>
+            <div style="font-size:.82rem;color:#888;margin-top:3px">Réservation #{{ r.pk }} — {{ r.date_demande|date:"d/m/Y" }}</div>
+          </div>
+          <span class="badge-statut {% if r.statut == 'validee' and r.date_fin < today %}badge-terminee{% else %}badge-{{ r.statut }}{% endif %}">
+            {% if r.statut == 'en_attente' %}<i class="fas fa-clock"></i> En attente
+            {% elif r.statut == 'validee' and r.date_fin < today %}<i class="fas fa-flag-checkered"></i> Terminée
+            {% elif r.statut == 'validee' %}<i class="fas fa-check-circle"></i> Validée
+            {% elif r.statut == 'refusee' %}<i class="fas fa-times-circle"></i> Refusée
+            {% else %}<i class="fas fa-ban"></i> Annulée{% endif %}
+          </span>
+        </div>
+        <div class="resa-detail">
+          <span class="resa-item"><i class="fas fa-calendar-alt"></i> Du {{ r.date_debut|date:"d/m/Y" }}</span>
+          <span class="resa-item"><i class="fas fa-calendar-check"></i> Au {{ r.date_fin|date:"d/m/Y" }}</span>
+          <span class="resa-item"><i class="fas fa-building"></i> {{ r.vehicule.partenaire.nom_agence }}</span>
+          <span class="resa-item"><i class="fas fa-map-marker-alt"></i> {{ r.vehicule.localisation }}</span>
+          <span class="resa-item"><i class="fas fa-location-arrow"></i> Prise en charge : {{ r.lieu_prise_en_charge }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="aucun"><i class="fas fa-inbox"></i><p>Aucune réservation trouvée pour « {{ recherche }} »</p></div>
+    {% endif %}
+  {% endif %}
+</div>
+</div>
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-logo">CIV<span>Location</span></div>
+      <p>Location de véhicules en Côte d'Ivoire.<br>Des partenaires de confiance, partout.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigation</h4>
+      <a href="/"><i class="fas fa-home"></i> Accueil</a>
+      <a href="/ma-reservation/"><i class="fas fa-search"></i> Ma réservation</a>
+      <a href="/devenir-partenaire/"><i class="fas fa-handshake"></i> Devenir partenaire</a>
+      <a href="/partenaire/connexion/"><i class="fas fa-user-tie"></i> Espace partenaire</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:franckyaboudou@gmail.com"><i class="fas fa-envelope"></i> franckyaboudou@gmail.com</a>
+      <a href="tel:+2250789923611"><i class="fas fa-phone"></i> +225 07 89 92 36 11</a>
+      <a href="https://wa.me/2250789923611" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CIV Location — Tous droits réservés</p>
+  </div>
+</footer>
+<!-- Bouton WhatsApp flottant -->
+<a href="https://wa.me/2250789923611" target="_blank" class="whatsapp-float" title="Contactez-nous sur WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+</body>
+</html>

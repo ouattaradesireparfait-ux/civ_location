@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><title>Mes réservations — Partenaire</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;color:#333;display:flex;flex-direction:column;min-height:100vh}
+.sidebar{width:250px;background:linear-gradient(180deg,#1a1a2e,#16213e);color:#fff;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-logo{padding:22px 18px;border-bottom:1px solid rgba(255,255,255,.1);font-size:1.3rem;font-weight:800}
+.sidebar-logo span{color:#f39c12}
+.sidebar-user{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.1);font-size:.82rem;color:#aaa}
+.sidebar-user strong{color:#fff;display:block;font-size:.9rem}
+.nav{flex:1;padding:8px 0}
+.nav-section{padding:10px 18px 5px;font-size:.68rem;color:#666;text-transform:uppercase;letter-spacing:1px}
+.nav a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:#ccc;text-decoration:none;font-size:.88rem;transition:all .2s}
+.nav a:hover,.nav a.active{background:rgba(243,156,18,.15);color:#f39c12;border-right:3px solid #f39c12}
+.nav a i{width:15px;text-align:center}
+.nav-deconnexion{padding:8px 0;border-top:1px solid rgba(255,255,255,.1)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#fff;padding:14px 28px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.topbar h1{font-size:1.15rem;font-weight:700;color:#1a1a2e}
+.content{flex:1;padding:22px 28px;overflow-y:auto}
+.card{background:#fff;border-radius:12px;padding:22px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:18px}
+.card-title{font-size:1rem;font-weight:700;color:#1a1a2e;margin-bottom:15px;display:flex;align-items:center;gap:8px}
+.card-title i{color:#f39c12}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:20px}
+.stat-card{background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.06);border-left:4px solid}
+.stat-card.orange{border-left-color:#f39c12}
+.stat-card.bleu{border-left-color:#3498db}
+.stat-card.vert{border-left-color:#27ae60}
+.stat-num{font-size:1.8rem;font-weight:800;color:#1a1a2e}
+.stat-label{font-size:.8rem;color:#888}
+table{width:100%;border-collapse:collapse;font-size:.87rem}
+th{background:#f8f9fa;padding:10px 12px;text-align:left;font-weight:600;color:#555;border-bottom:2px solid #eee}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:hover{background:#fafafa}
+.badge{padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:700;display:inline-block}
+.badge-en_attente{background:#fff3cd;color:#856404}
+.badge-valide{background:#d4edda;color:#155724}
+.badge-rejete,.badge-refusee{background:#f8d7da;color:#721c24}
+.badge-validee{background:#d4edda;color:#155724}
+.badge-annulee{background:#e2e3e5;color:#383d41}
+.btn{padding:8px 16px;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;border:none;transition:opacity .2s}
+.btn:hover{opacity:.85}
+.btn-sm{padding:5px 11px;font-size:.78rem}
+.btn-primary{background:#f39c12;color:#fff}
+.btn-info{background:#3498db;color:#fff}
+.btn-success{background:#27ae60;color:#fff}
+.btn-danger{background:#e74c3c;color:#fff}
+.btn-secondary{background:#6c757d;color:#fff}
+.form-groupe{margin-bottom:14px}
+.form-groupe label{display:block;font-size:.83rem;font-weight:600;color:#555;margin-bottom:5px}
+.form-groupe input,.form-groupe select,.form-groupe textarea{width:100%;padding:10px 12px;border:2px solid #e0e0e0;border-radius:8px;font-size:.93rem;font-family:inherit;transition:border-color .2s}
+.form-groupe input:focus,.form-groupe select:focus,.form-groupe textarea:focus{outline:none;border-color:#f39c12}
+.deux-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.erreur-msg{background:#ffeaea;border:1px solid #f5c6cb;border-radius:8px;padding:12px;color:#721c24;font-size:.88rem;margin-bottom:14px}
+.succes-msg{background:#d4edda;border:1px solid #c3e6cb;border-radius:8px;padding:12px;color:#155724;font-size:.88rem;margin-bottom:14px}
+.empty{text-align:center;padding:25px;color:#aaa;font-size:.88rem}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border-radius:12px;padding:30px;max-width:420px;width:90%;text-align:center}
+.modal h3{font-size:1.1rem;margin-bottom:10px;color:#1a1a2e}
+.modal p{color:#666;font-size:.88rem;margin-bottom:18px;line-height:1.6}
+.modal-btns{display:flex;gap:10px;justify-content:center}
+.upload-zone{border:2px dashed #ddd;border-radius:8px;padding:15px;text-align:center;cursor:pointer;background:#fafafa;transition:border-color .2s}
+.upload-zone:hover{border-color:#f39c12}
+.upload-zone i{font-size:1.3rem;color:#bbb;display:block;margin-bottom:6px}
+.upload-zone p{font-size:.8rem;color:#888}
+.upload-zone input[type=file]{display:none}
+@media(max-width:700px){.stats{grid-template-columns:1fr}.deux-cols{grid-template-columns:1fr}}
+
+.app-wrapper{display:flex;flex:1;overflow:hidden}
+footer.footer-interne{
+  background:#1a1a2e;
+  color:#555;
+  text-align:center;
+  padding:18px 20px;
+  font-size:.82rem;
+  border-top:1px solid rgba(255,255,255,.05);
+  width:100%;
+  clear:both;
+  flex-shrink:0;
+}
+footer.footer-interne a{color:#f39c12;text-decoration:none}
+</style></head>
+<body>
+
+<div class="app-wrapper">
+<div class="sidebar">
+  <div class="sidebar-logo">CIV<span>Location</span></div>
+  <div class="sidebar-user"><strong>{{ partenaire.nom_agence }}</strong>{{ partenaire.prenom_responsable }} {{ partenaire.nom_responsable }}</div>
+  <nav class="nav">
+    <div class="nav-section">Principal</div>
+    <a href="{% url 'partenaire_dashboard' %}"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a>
+    <div class="nav-section">Gestion</div>
+    <a href="{% url 'partenaire_annonces' %}"><i class="fas fa-car"></i> Mes annonces</a>
+    <a href="{% url 'partenaire_annonce_ajouter' %}"><i class="fas fa-plus-circle"></i> Publier un véhicule</a>
+    <a href="{% url 'partenaire_reservations' %}"><i class="fas fa-calendar-alt"></i> Mes réservations</a>
+    <div class="nav-section">Compte</div>
+    <a href="{% url 'partenaire_profil' %}"><i class="fas fa-user"></i> Mon profil</a>
+    <div class="nav-deconnexion"><a href="{% url 'partenaire_deconnexion' %}"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></div>
+  </nav>
+</div>
+
+<div class="main">
+  <div class="topbar"><h1><i class="fas fa-calendar-alt"></i> Mes réservations</h1></div>
+  <div class="content">
+    <div class="card">
+      <table>
+        <thead><tr><th>#</th><th>Client</th><th>Véhicule</th><th>Dates</th><th>Durée</th><th>Statut</th><th>Date demande</th></tr></thead>
+        <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td>#{{ r.pk }}</td>
+          <td>{{ r.prenom }} {{ r.nom }}<br> </td>
+          <td>{{ r.vehicule.marque }} {{ r.vehicule.modele }}</td>
+          <td>{{ r.date_debut|date:"d/m/Y" }}<br>{{ r.date_fin|date:"d/m/Y" }}</td>
+          <td>{{ r.nombre_jours }} j</td>
+          <td><span class="badge badge-{{ r.statut }}">{{ r.get_statut_display }}</span></td>
+          <td>{{ r.date_demande|date:"d/m/Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7"><div class="empty">Aucune réservation reçue</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer class="footer-interne">
+  <p>© 2026 CIV Location &nbsp;|&nbsp;
+  <a href="mailto:franckyaboudou@gmail.com"><i class="fas fa-envelope"></i> franckyaboudou@gmail.com</a>
+  &nbsp;|&nbsp;
+  <a href="tel:+2250789923611"><i class="fas fa-phone"></i> +225 07 89 92 36 11</a>
+  </p>
+</footer>
+</body></html>

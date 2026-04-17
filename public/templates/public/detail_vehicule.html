@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ vehicule.marque }} {{ vehicule.modele }} — CIV Location</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#f5f6fa;color:#333}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:15px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.6rem;font-weight:800;text-decoration:none;color:#fff}.logo span{color:#f39c12}
+nav a{color:#ddd;text-decoration:none;margin-left:20px;font-size:.9rem}
+nav a:hover{color:#f39c12}
+.container{max-width:1100px;margin:30px auto;padding:0 20px}
+.fil{font-size:.85rem;color:#888;margin-bottom:20px}
+.fil a{color:#f39c12;text-decoration:none}
+.grille{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.galerie{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 15px rgba(0,0,0,.08)}
+.photo-principale{height:300px;overflow:hidden;background:#eee;display:flex;align-items:center;justify-content:center}
+.photo-principale img{width:100%;height:100%;object-fit:cover}
+.thumbs{display:flex;gap:8px;padding:10px;overflow-x:auto}
+.thumbs img{height:70px;width:100px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border-color .2s}
+.thumbs img:hover,.thumbs img.active{border-color:#f39c12}
+.no-photo{height:300px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:3rem;background:#f5f5f5}
+.fiche{background:#fff;border-radius:12px;padding:25px;box-shadow:0 3px 15px rgba(0,0,0,.08)}
+.titre{font-size:1.6rem;font-weight:800;color:#1a1a2e;margin-bottom:5px}
+.agence{color:#888;font-size:.9rem;margin-bottom:20px}
+.prix-bloc{background:linear-gradient(135deg,#f39c12,#e08e0b);color:#fff;border-radius:10px;padding:15px 20px;margin-bottom:20px;text-align:center}
+.prix-num{font-size:2rem;font-weight:800}
+.prix-label{font-size:.85rem;opacity:.9}
+.specs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.spec{display:flex;align-items:center;gap:10px;padding:10px;background:#f8f9fa;border-radius:8px}
+.spec i{color:#f39c12;width:18px;text-align:center}
+.spec-label{font-size:.8rem;color:#888;display:block}
+.spec-val{font-size:.95rem;font-weight:600}
+.badge-dispo{display:inline-block;padding:6px 16px;border-radius:20px;font-size:.85rem;font-weight:700;margin-bottom:20px}
+.dispo{background:#d4edda;color:#155724}
+.indispo{background:#f8d7da;color:#721c24}
+.btn-reserver{display:block;background:#f39c12;color:#fff;text-decoration:none;text-align:center;padding:14px;border-radius:10px;font-size:1rem;font-weight:700;transition:background .2s}
+.btn-reserver:hover{background:#e08e0b}
+.btn-reserver.disabled{background:#ccc;pointer-events:none}
+.description{background:#fff;border-radius:12px;padding:25px;box-shadow:0 3px 15px rgba(0,0,0,.08);margin-top:20px;grid-column:1/-1}
+.description h3{font-size:1.1rem;font-weight:700;margin-bottom:12px;color:#1a1a2e}
+footer{background:#1a1a2e;color:#aaa;text-align:center;padding:25px;margin-top:40px}
+footer a{color:#f39c12;text-decoration:none}
+@media(max-width:768px){.grille{grid-template-columns:1fr}}
+
+footer{background:#1a1a2e;color:#aaa;margin-top:50px}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;padding:40px;max-width:1200px;margin:0 auto}
+.footer-brand .footer-logo{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px}
+.footer-brand .footer-logo span{color:#f39c12}
+.footer-brand p{font-size:.85rem;line-height:1.7;color:#888}
+.footer-links h4,.footer-contact h4{color:#fff;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.footer-links a,.footer-contact a{display:flex;align-items:center;gap:8px;color:#888;text-decoration:none;font-size:.85rem;margin-bottom:8px;transition:color .2s}
+.footer-links a:hover,.footer-contact a:hover{color:#f39c12}
+.footer-links a i,.footer-contact a i{width:14px;color:#f39c12}
+.footer-contact .wa-link{color:#25d366 !important}
+.footer-contact .wa-link i{color:#25d366 !important}
+.footer-contact .wa-link:hover{color:#1ebe57 !important}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:18px 40px;text-align:center;font-size:.82rem;color:#555}
+@media(max-width:768px){.footer-main{grid-template-columns:1fr;gap:25px;padding:25px}}
+
+
+.whatsapp-float{position:fixed;bottom:28px;right:28px;background:#25d366;color:#fff;border-radius:50%;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.5);z-index:9999;transition:transform .2s,box-shadow .2s;animation:pulse-wa 2.5s infinite}
+.whatsapp-float:hover{transform:scale(1.12);box-shadow:0 6px 28px rgba(37,211,102,.7)}
+@keyframes pulse-wa{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8)}}
+
+
+.agence-badge{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.logo-agence-det{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #f0f0f0}
+.logo-agence-det-defaut{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f39c12,#e08e0b);display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <a href="{% url 'accueil' %}" class="logo">CIV<span>Location</span></a>
+  <nav>
+    <a href="{% url 'accueil' %}"><i class="fas fa-arrow-left"></i> Retour</a>
+    <a href="{% url 'suivi_reservation' %}"><i class="fas fa-search"></i> Ma réservation</a>
+  </nav>
+</header>
+<div class="container">
+  <div class="fil">
+    <a href="{% url 'accueil' %}">Accueil</a> &rsaquo;
+    <a href="{% url 'accueil' %}">Véhicules</a> &rsaquo;
+    {{ vehicule.marque }} {{ vehicule.modele }}
+  </div>
+  <div class="grille">
+    <div class="galerie">
+      {% if photos %}
+      <div class="photo-principale">
+        <img id="main-photo" src="{{ photos.0.image.url }}" alt="{{ vehicule.marque }}">
+      </div>
+      {% if photos|length > 1 %}
+      <div class="thumbs">
+        {% for p in photos %}
+        <img src="{{ p.image.url }}" onclick="changePhoto('{{ p.image.url }}')" class="{% if forloop.first %}active{% endif %}" id="thumb-{{ forloop.counter }}">
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% else %}
+      <div class="no-photo"><i class="fas fa-car"></i></div>
+      {% endif %}
+    </div>
+    <div class="fiche">
+      <div class="titre">{{ vehicule.marque }} {{ vehicule.modele }} {{ vehicule.annee }}</div>
+      <div class="agence-badge">
+        {% if vehicule.partenaire.logo %}
+        <img src="{{ vehicule.partenaire.logo.url }}" class="logo-agence-det" alt="{{ vehicule.partenaire.nom_agence }}">
+        {% else %}
+        <div class="logo-agence-det-defaut">{{ vehicule.partenaire.nom_agence|slice:":1"|upper }}</div>
+        {% endif %}
+        <div>
+          <div style="font-weight:600;color:#1a1a2e;font-size:.95rem">{{ vehicule.partenaire.nom_agence }}</div>
+          <div style="font-size:.78rem;color:#aaa">Agence partenaire</div>
+        </div>
+      </div>
+      <span class="badge-dispo {% if vehicule.disponible %}dispo{% else %}indispo{% endif %}">
+        {% if vehicule.disponible %}<i class="fas fa-check-circle"></i> Disponible{% else %}<i class="fas fa-times-circle"></i> Indisponible{% endif %}
+      </span>
+      <div class="prix-bloc">
+        <div class="prix-num">{{ vehicule.prix_par_jour|floatformat:0 }} FCFA</div>
+        <div class="prix-label">par jour</div>
+      </div>
+      <div class="specs">
+        <div class="spec"><i class="fas fa-tag"></i><div><span class="spec-label">Type</span><span class="spec-val">{{ vehicule.get_type_vehicule_display }}</span></div></div>
+        <div class="spec"><i class="fas fa-palette"></i><div><span class="spec-label">Couleur</span><span class="spec-val">{{ vehicule.couleur }}</span></div></div>
+        <div class="spec"><i class="fas fa-users"></i><div><span class="spec-label">Places</span><span class="spec-val">{{ vehicule.nombre_places }}</span></div></div>
+        <div class="spec"><i class="fas fa-cog"></i><div><span class="spec-label">Transmission</span><span class="spec-val">{{ vehicule.get_transmission_display }}</span></div></div>
+        <div class="spec"><i class="fas fa-snowflake"></i><div><span class="spec-label">Climatisation</span><span class="spec-val">{% if vehicule.climatisation %}Oui{% else %}Non{% endif %}</span></div></div>
+        <div class="spec"><i class="fas fa-map-marker-alt"></i><div><span class="spec-label">Localisation</span><span class="spec-val">{{ vehicule.localisation }}</span></div></div>
+      </div>
+      {% if vehicule.disponible %}
+      <a href="{% url 'reservation' vehicule.pk %}" class="btn-reserver"><i class="fas fa-calendar-check"></i> Réserver ce véhicule</a>
+      {% else %}
+      <a href="#" class="btn-reserver disabled"><i class="fas fa-ban"></i> Véhicule indisponible</a>
+      {% endif %}
+    </div>
+    {% if vehicule.description %}
+    <div class="description">
+      <h3><i class="fas fa-info-circle"></i> Description</h3>
+      <p>{{ vehicule.description }}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-logo">CIV<span>Location</span></div>
+      <p>Location de véhicules en Côte d'Ivoire.<br>Des partenaires de confiance, partout.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigation</h4>
+      <a href="/"><i class="fas fa-home"></i> Accueil</a>
+      <a href="/ma-reservation/"><i class="fas fa-search"></i> Ma réservation</a>
+      <a href="/devenir-partenaire/"><i class="fas fa-handshake"></i> Devenir partenaire</a>
+      <a href="/partenaire/connexion/"><i class="fas fa-user-tie"></i> Espace partenaire</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:franckyaboudou@gmail.com"><i class="fas fa-envelope"></i> franckyaboudou@gmail.com</a>
+      <a href="tel:+2250789923611"><i class="fas fa-phone"></i> +225 07 89 92 36 11</a>
+      <a href="https://wa.me/2250789923611" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CIV Location — Tous droits réservés</p>
+  </div>
+</footer>
+<script>
+function changePhoto(url){
+  document.getElementById('main-photo').src=url;
+  document.querySelectorAll('.thumbs img').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+<!-- Bouton WhatsApp flottant -->
+<a href="https://wa.me/2250789923611" target="_blank" class="whatsapp-float" title="Contactez-nous sur WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+</body>
+</html>

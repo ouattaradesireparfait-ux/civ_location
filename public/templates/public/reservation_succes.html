@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réservation envoyée — CIV Location</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#f5f6fa;color:#333;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:15px 40px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:1.6rem;font-weight:800;text-decoration:none;color:#fff}.logo span{color:#f39c12}
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+.card{background:#fff;border-radius:16px;padding:50px;text-align:center;max-width:550px;box-shadow:0 5px 30px rgba(0,0,0,.1)}
+.icone-succes{width:80px;height:80px;background:linear-gradient(135deg,#27ae60,#2ecc71);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 25px;font-size:2rem;color:#fff}
+h1{font-size:1.6rem;color:#1a1a2e;margin-bottom:15px}
+.ref{background:#f8f9fa;border-radius:8px;padding:15px;margin:20px 0;font-size:.9rem;color:#555}
+.ref strong{color:#1a1a2e;display:block;margin-bottom:5px}
+.info-suivi{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:15px;font-size:.9rem;margin:15px 0;text-align:left}
+.btns{display:flex;gap:12px;justify-content:center;margin-top:25px;flex-wrap:wrap}
+.btn{padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:.95rem}
+.btn-primary{background:#f39c12;color:#fff}
+.btn-primary:hover{background:#e08e0b}
+.btn-secondary{background:#1a1a2e;color:#fff}
+.btn-secondary:hover{background:#16213e}
+footer{background:#1a1a2e;color:#aaa;text-align:center;padding:20px}
+footer a{color:#f39c12;text-decoration:none}
+
+footer{background:#1a1a2e;color:#aaa;margin-top:50px}
+.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;padding:40px;max-width:1200px;margin:0 auto}
+.footer-brand .footer-logo{font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px}
+.footer-brand .footer-logo span{color:#f39c12}
+.footer-brand p{font-size:.85rem;line-height:1.7;color:#888}
+.footer-links h4,.footer-contact h4{color:#fff;font-size:.9rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.footer-links a,.footer-contact a{display:flex;align-items:center;gap:8px;color:#888;text-decoration:none;font-size:.85rem;margin-bottom:8px;transition:color .2s}
+.footer-links a:hover,.footer-contact a:hover{color:#f39c12}
+.footer-links a i,.footer-contact a i{width:14px;color:#f39c12}
+.footer-contact .wa-link{color:#25d366 !important}
+.footer-contact .wa-link i{color:#25d366 !important}
+.footer-contact .wa-link:hover{color:#1ebe57 !important}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding:18px 40px;text-align:center;font-size:.82rem;color:#555}
+@media(max-width:768px){.footer-main{grid-template-columns:1fr;gap:25px;padding:25px}}
+
+
+.whatsapp-float{position:fixed;bottom:28px;right:28px;background:#25d366;color:#fff;border-radius:50%;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.5);z-index:9999;transition:transform .2s,box-shadow .2s;animation:pulse-wa 2.5s infinite}
+.whatsapp-float:hover{transform:scale(1.12);box-shadow:0 6px 28px rgba(37,211,102,.7)}
+@keyframes pulse-wa{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5)}50%{box-shadow:0 4px 30px rgba(37,211,102,.8)}}
+
+</style>
+</head>
+<body>
+<header>
+  <a href="{% url 'accueil' %}" class="logo">CIV<span>Location</span></a>
+</header>
+<div class="main">
+  <div class="card">
+    <div class="icone-succes"><i class="fas fa-check"></i></div>
+    <h1>Demande envoyée avec succès !</h1>
+    <p style="color:#666;margin-bottom:20px">Votre demande de réservation a bien été reçue et est en cours de traitement.</p>
+    <div class="ref">
+      <strong>Référence de votre réservation</strong>
+      #{{ reservation.pk }} — {{ reservation.vehicule.marque }} {{ reservation.vehicule.modele }}
+    </div>
+    <div class="info-suivi">
+      <i class="fas fa-info-circle" style="color:#f39c12"></i>
+      <strong>Comment suivre votre réservation ?</strong><br><br>
+      Rendez-vous sur <a href="{% url 'suivi_reservation' %}" style="color:#f39c12">Ma Réservation</a> et entrez votre <strong>email</strong> ou votre <strong>téléphone</strong> pour voir le statut de votre demande.
+    </div>
+    <div class="btns">
+      <a href="{% url 'suivi_reservation' %}" class="btn btn-primary"><i class="fas fa-search"></i> Suivre ma réservation</a>
+      <a href="{% url 'accueil' %}" class="btn btn-secondary"><i class="fas fa-home"></i> Retour à l'accueil</a>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-logo">CIV<span>Location</span></div>
+      <p>Location de véhicules en Côte d'Ivoire.<br>Des partenaires de confiance, partout.</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigation</h4>
+      <a href="/"><i class="fas fa-home"></i> Accueil</a>
+      <a href="/ma-reservation/"><i class="fas fa-search"></i> Ma réservation</a>
+      <a href="/devenir-partenaire/"><i class="fas fa-handshake"></i> Devenir partenaire</a>
+      <a href="/partenaire/connexion/"><i class="fas fa-user-tie"></i> Espace partenaire</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:franckyaboudou@gmail.com"><i class="fas fa-envelope"></i> franckyaboudou@gmail.com</a>
+      <a href="tel:+2250789923611"><i class="fas fa-phone"></i> +225 07 89 92 36 11</a>
+      <a href="https://wa.me/2250789923611" target="_blank" class="wa-link"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CIV Location — Tous droits réservés</p>
+  </div>
+</footer>
+<!-- Bouton WhatsApp flottant -->
+<a href="https://wa.me/2250789923611" target="_blank" class="whatsapp-float" title="Contactez-nous sur WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+</body>
+</html>

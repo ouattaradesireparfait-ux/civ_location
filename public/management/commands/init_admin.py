@@ -11,7 +11,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(
                 f'Un compte administrateur avec l\'email {email} existe déjà.'
             ))
-            return
+        
 
         admin = UtilisateurInterne(
             nom='Aboudou',

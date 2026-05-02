@@ -94,10 +94,12 @@ def annonce_ajouter(request):
         localisation = request.POST.get('localisation', '').strip()
         disponible = request.POST.get('disponible', '1') == '1'
         description = request.POST.get('description', '').strip()
-        photos = request.FILES.getlist('photos')
+        photos = [request.FILES.get(f'photo_{i}') for i in range(1, 6) if request.FILES.get(f'photo_{i}')]
 
         if not all([marque, modele, annee, couleur, type_vehicule, nombre_places, prix_par_jour, localisation]):
             erreur = "Veuillez remplir tous les champs obligatoires."
+        elif not request.FILES.get('photo_1'):
+            erreur = "La première photo du véhicule est obligatoire."
         else:
             try:
                 v = Vehicule.objects.create(
@@ -141,7 +143,7 @@ def annonce_modifier(request, pk):
             v.nombre_places = int(request.POST.get('nombre_places', v.nombre_places))
             v.prix_par_jour = float(request.POST.get('prix_par_jour', v.prix_par_jour))
             v.statut_validation = 'en_attente'  # Repassera en validation
-            photos = request.FILES.getlist('photos')
+            photos = [request.FILES.get(f'photo_{i}') for i in range(1, 6) if request.FILES.get(f'photo_{i}')]
             v.save()
             if photos:
                 v.photos.all().delete()

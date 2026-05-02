@@ -3,55 +3,28 @@ from gestion.models import UtilisateurInterne
 
 
 class Command(BaseCommand):
-    help = "Initialise le compte administrateur par défaut"
+    help = "Initialise les comptes administrateurs par défaut"
 
-    def handle(self, *args, **options):
-        email = 'franckyaboudou@gmail.com'
+    def create_admin(self, nom, prenom, email, password):
         if UtilisateurInterne.objects.filter(email=email).exists():
             self.stdout.write(self.style.WARNING(
-                f'Un compte administrateur avec l\'email {email} existe déjà.'
+                f'Un compte avec l\'email {email} existe déjà.'
             ))
-        
-
-        admin = UtilisateurInterne(
-            nom='Aboudou',
-            prenom='Franck',
-            email=email,
-            telephone='',
-            role='admin',
-            statut='actif',
-        )
-        admin.set_password('AdminDefaut')
-        admin.save()
-
-        self.stdout.write(self.style.SUCCESS(
-            f'✅ Compte administrateur créé avec succès !\n'
-            f'   Email    : {email}\n'
-            f'   Mot de passe : AdminDefaut\n'
-            f'   Rôle     : Administrateur'
-        ))
-
-        emailmaint = 'ouattaradesireparfait@gmail.com'
-        if UtilisateurInterne.objects.filter(email=emailmaint).exists():
-            self.stdout.write(self.style.WARNING(
-                f'Un compte administrateur avec l\'email {emailmaint} existe déjà.'
+        else:
+            admin = UtilisateurInterne(
+                nom=nom,
+                prenom=prenom,
+                email=email,
+                telephone='',
+                role='admin',
+                statut='actif',
+            )
+            admin.set_password(password)
+            admin.save()
+            self.stdout.write(self.style.SUCCESS(
+                f'✅ Compte créé : {email}'
             ))
-            return
 
-        admin = UtilisateurInterne(
-            nom='Ouattara',
-            prenom='Désiré Parfait',
-            email=emailmaint,
-            telephone='',
-            role='admin',
-            statut='actif',
-        )
-        admin.set_password('AdminDefaut')
-        admin.save()
-
-        self.stdout.write(self.style.SUCCESS(
-            f'✅ Compte administrateur créé avec succès !\n'
-            f'   Email    : {emailmaint}\n'
-            f'   Mot de passe : AdminDefaut\n'
-            f'   Rôle     : Administrateur'
-        ))
+    def handle(self, *args, **options):
+        self.create_admin('Aboudou', 'Franck', 'franckyaboudou@gmail.com', 'AdminDefaut')
+        self.create_admin('Ouattara', 'Désiré Parfait', 'ouattaradesireparfait@gmail.com', 'AdminDefaut')

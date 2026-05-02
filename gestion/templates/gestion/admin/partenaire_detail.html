@@ -1,0 +1,59 @@
+{% extends "gestion/base_admin.html" %}
+{% block title %}Partenaire — {{ partenaire.nom_agence }}{% endblock %}
+{% block page_title %}<i class="fas fa-handshake"></i> {{ partenaire.nom_agence }}{% endblock %}
+{% block topbar_right %}
+<div style="display:flex;gap:10px">
+  <a href="{% url 'gestion_partenaires' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour</a>
+  {% if partenaire.statut == 'en_attente' %}
+  <a href="{% url 'gestion_partenaire_statut' partenaire.pk 'actif' %}" class="btn btn-success"><i class="fas fa-check"></i> Valider</a>
+  <a href="{% url 'gestion_partenaire_statut' partenaire.pk 'suspendu' %}" class="btn btn-danger"><i class="fas fa-times"></i> Refuser</a>
+  {% endif %}
+</div>
+{% endblock %}
+{% block content %}
+    {% if messages %}{% for m in messages %}<div class="succes-msg">{{ m }}</div>{% endfor %}{% endif %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-info-circle"></i> Informations</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Agence</div><div class="detail-val">{{ partenaire.nom_agence }}</div></div>
+        <div class="detail-item"><div class="detail-label">Statut</div><div class="detail-val"><span class="badge badge-{{ partenaire.statut }}">{{ partenaire.get_statut_display }}</span></div></div>
+        <div class="detail-item"><div class="detail-label">Responsable</div><div class="detail-val">{{ partenaire.prenom_responsable }} {{ partenaire.nom_responsable }}</div></div>
+        <div class="detail-item"><div class="detail-label">Email</div><div class="detail-val">{{ partenaire.email }}</div></div>
+        <div class="detail-item"><div class="detail-label">Téléphone</div><div class="detail-val">{{ partenaire.telephone }}</div></div>
+        <div class="detail-item"><div class="detail-label">Ville</div><div class="detail-val">{{ partenaire.ville }}</div></div>
+        <div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Adresse</div><div class="detail-val">{{ partenaire.adresse }}</div></div>
+        <div class="detail-item"><div class="detail-label">Date inscription</div><div class="detail-val">{{ partenaire.date_inscription|date:"d/m/Y H:i" }}</div></div>
+        <div class="detail-item"><div class="detail-label">Véhicules</div><div class="detail-val">{{ partenaire.vehicules.count }}</div></div>
+      </div>
+      {% if partenaire.document_justificatif %}
+      <div style="margin-top:20px">
+        <div class="detail-label">Document justificatif</div>
+        <a href="{{ partenaire.document_justificatif.url }}" target="_blank" class="btn btn-info" style="margin-top:8px"><i class="fas fa-file"></i> Voir le document</a>
+      </div>
+      {% endif %}
+      {% if partenaire.logo %}
+      <div style="margin-top:15px">
+        <div class="detail-label">Logo</div>
+        <img src="{{ partenaire.logo.url }}" style="max-height:80px;margin-top:8px;border-radius:6px">
+      </div>
+      {% endif %}
+    </div>
+    {% if partenaire.vehicules.exists %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-car"></i> Véhicules ({{ partenaire.vehicules.count }})</div>
+      <table>
+        <thead><tr><th>Véhicule</th><th>Prix/j</th><th>Statut</th><th>Disponible</th></tr></thead>
+        <tbody>
+        {% for v in partenaire.vehicules.all %}
+        <tr>
+          <td>{{ v.marque }} {{ v.modele }} {{ v.annee }}</td>
+          <td>{{ v.prix_par_jour|floatformat:0 }} FCFA</td>
+          <td><span class="badge badge-{{ v.statut_validation }}">{{ v.get_statut_validation_display }}</span></td>
+          <td>{% if v.disponible %}<span style="color:#27ae60"><i class="fas fa-check"></i></span>{% else %}<span style="color:#e74c3c"><i class="fas fa-times"></i></span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+{% endblock %}

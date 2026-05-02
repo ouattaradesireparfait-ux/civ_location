@@ -1,0 +1,62 @@
+{% extends "gestion/base_admin.html" %}
+{% block title %}Demandes partenaires — CIV Location{% endblock %}
+{% block page_title %}<i class="fas fa-inbox"></i> Demandes partenaires <span class="badge-count">{{ demandes|length }}</span>{% endblock %}
+{% block content %}
+    {% if messages %}{% for m in messages %}<div class="alerte-info"><i class="fas fa-info-circle"></i> {{ m }}</div>{% endfor %}{% endif %}
+    <div class="section-title"><i class="fas fa-hourglass-half"></i> En attente de traitement ({{ demandes|length }})</div>
+    {% if demandes %}
+      {% for d in demandes %}
+      <div style="background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);margin-bottom:16px;border-left:4px solid #f39c12;padding:22px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+          <div>
+            <div style="font-size:1.05rem;font-weight:700;color:#1a1a2e"><i class="fas fa-building" style="color:#f39c12"></i> {{ d.nom_agence }}</div>
+            <div style="font-size:.8rem;color:#aaa;margin-top:3px">Reçue le {{ d.date_demande|date:"d/m/Y à H:i" }}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px">
+          <div class="detail-item"><div class="detail-label">Responsable</div><div class="detail-val">{{ d.prenom_responsable }} {{ d.nom_responsable }}</div></div>
+          <div class="detail-item"><div class="detail-label">Email</div><div class="detail-val">{{ d.email }}</div></div>
+          <div class="detail-item"><div class="detail-label">Téléphone</div><div class="detail-val">{{ d.telephone }}</div></div>
+          <div class="detail-item"><div class="detail-label">Ville</div><div class="detail-val">{{ d.ville }}</div></div>
+          <div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Adresse</div><div class="detail-val">{{ d.adresse }}</div></div>
+        </div>
+        {% if d.document_justificatif %}
+        <a href="{{ d.document_justificatif.url }}" target="_blank" class="doc-link"><i class="fas fa-file-alt"></i> Voir le document justificatif</a><br>
+        {% else %}
+        <p style="font-size:.82rem;color:#aaa;margin-bottom:10px"><i class="fas fa-minus-circle"></i> Aucun document fourni</p>
+        {% endif %}
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <form method="post" action="{% url 'gestion_demande_valider' d.pk %}" style="display:inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Valider — Créer le compte</button>
+          </form>
+          <form method="post" action="{% url 'gestion_demande_refuser' d.pk %}" style="display:inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Refuser la demande de {{ d.nom_agence }} ?')"><i class="fas fa-times"></i> Refuser</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty"><i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:10px;color:#ddd"></i><p>Aucune demande en attente</p></div>
+    {% endif %}
+    {% if traitees %}
+    <div class="section-title" style="margin-top:30px"><i class="fas fa-check-circle"></i> Demandes récemment traitées</div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Agence</th><th>Email</th><th>Ville</th><th>Date</th><th>Statut</th></tr></thead>
+        <tbody>
+        {% for d in traitees %}
+        <tr>
+          <td>{{ d.nom_agence }}</td>
+          <td>{{ d.email }}</td>
+          <td>{{ d.ville }}</td>
+          <td>{{ d.date_demande|date:"d/m/Y" }}</td>
+          <td><span class="badge badge-annulee"><i class="fas fa-check"></i> Traitée</span></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+{% endblock %}

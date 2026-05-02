@@ -1,0 +1,42 @@
+{% extends "gestion/base_admin.html" %}
+{% block title %}Annonce — {{ vehicule.marque }} {{ vehicule.modele }}{% endblock %}
+{% block page_title %}<i class="fas fa-car"></i> {{ vehicule.marque }} {{ vehicule.modele }} {{ vehicule.annee }}{% endblock %}
+{% block topbar_right %}<a href="{% url 'gestion_annonces' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour</a>{% endblock %}
+{% block content %}
+    {% if messages %}{% for m in messages %}<div class="succes-msg">{{ m }}</div>{% endfor %}{% endif %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-info-circle"></i> Caractéristiques</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Marque / Modèle</div><div class="detail-val">{{ vehicule.marque }} {{ vehicule.modele }}</div></div>
+        <div class="detail-item"><div class="detail-label">Année</div><div class="detail-val">{{ vehicule.annee }}</div></div>
+        <div class="detail-item"><div class="detail-label">Type</div><div class="detail-val">{{ vehicule.get_type_vehicule_display }}</div></div>
+        <div class="detail-item"><div class="detail-label">Couleur</div><div class="detail-val">{{ vehicule.couleur }}</div></div>
+        <div class="detail-item"><div class="detail-label">Places</div><div class="detail-val">{{ vehicule.nombre_places }}</div></div>
+        <div class="detail-item"><div class="detail-label">Transmission</div><div class="detail-val">{{ vehicule.get_transmission_display }}</div></div>
+        <div class="detail-item"><div class="detail-label">Climatisation</div><div class="detail-val">{% if vehicule.climatisation %}Oui{% else %}Non{% endif %}</div></div>
+        <div class="detail-item"><div class="detail-label">Prix / jour</div><div class="detail-val" style="color:#f39c12;font-weight:800">{{ vehicule.prix_par_jour|floatformat:0 }} FCFA</div></div>
+        <div class="detail-item"><div class="detail-label">Localisation</div><div class="detail-val">{{ vehicule.localisation }}</div></div>
+        <div class="detail-item"><div class="detail-label">Disponible</div><div class="detail-val">{% if vehicule.disponible %}Oui{% else %}Non{% endif %}</div></div>
+        <div class="detail-item"><div class="detail-label">Statut</div><div class="detail-val"><span class="badge badge-{{ vehicule.statut_validation }}">{{ vehicule.get_statut_validation_display }}</span></div></div>
+        <div class="detail-item"><div class="detail-label">Partenaire</div><div class="detail-val">{{ vehicule.partenaire.nom_agence }}</div></div>
+        {% if vehicule.description %}<div class="detail-item" style="grid-column:1/-1"><div class="detail-label">Description</div><div class="detail-val">{{ vehicule.description }}</div></div>{% endif %}
+      </div>
+    </div>
+    {% if vehicule.photos.exists %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-images"></i> Photos</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        {% for p in vehicule.photos.all %}<a href="{{ p.image.url }}" target="_blank"><img src="{{ p.image.url }}" style="height:120px;width:160px;object-fit:cover;border-radius:8px;border:1px solid #ddd"></a>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    {% if vehicule.statut_validation == 'en_attente' %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-gavel"></i> Validation</div>
+      <div style="display:flex;gap:12px">
+        <form method="post" action="{% url 'gestion_annonce_valider' vehicule.pk %}">{% csrf_token %}<button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Valider l'annonce</button></form>
+        <form method="post" action="{% url 'gestion_annonce_rejeter' vehicule.pk %}">{% csrf_token %}<button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Rejeter</button></form>
+      </div>
+    </div>
+    {% endif %}
+{% endblock %}

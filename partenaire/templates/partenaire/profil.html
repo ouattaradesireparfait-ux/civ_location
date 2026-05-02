@@ -1,0 +1,39 @@
+{% extends "partenaire/base_partenaire.html" %}
+{% block title %}Mon profil — Partenaire{% endblock %}
+{% block page_title %}<i class="fas fa-user"></i> Mon profil{% endblock %}
+{% block content %}
+    {% if messages %}{% for m in messages %}<div class="succes-msg">{{ m }}</div>{% endfor %}{% endif %}
+    <div class="card" style="max-width:600px">
+      {% if erreur %}<div class="erreur-msg">{{ erreur }}</div>{% endif %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-groupe"><label>Nom de l'agence *</label><input type="text" name="nom_agence" value="{{ partenaire.nom_agence }}" required></div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Prénom *</label><input type="text" name="prenom_responsable" value="{{ partenaire.prenom_responsable }}" required></div>
+          <div class="form-groupe"><label>Nom *</label><input type="text" name="nom_responsable" value="{{ partenaire.nom_responsable }}" required></div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Email *</label><input type="email" name="email" value="{{ partenaire.email }}" required></div>
+          <div class="form-groupe"><label>Téléphone *</label><input type="tel" name="telephone" value="{{ partenaire.telephone }}" required></div>
+        </div>
+        <div class="form-groupe"><label>Ville *</label><input type="text" name="ville" value="{{ partenaire.ville }}" required></div>
+        <div class="form-groupe"><label>Adresse *</label><textarea name="adresse" required style="min-height:70px">{{ partenaire.adresse }}</textarea></div>
+        <div class="form-groupe"><label>Nouveau mot de passe (laisser vide pour ne pas changer)</label><input type="password" name="mot_de_passe" placeholder="••••••••"></div>
+        <div class="form-groupe">
+          <label>Logo de l'agence</label>
+          {% if partenaire.logo %}
+          <div style="display:flex;align-items:center;gap:15px;margin-bottom:12px">
+            <img src="{{ partenaire.logo.url }}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid #f39c12">
+            <div>
+              <div style="font-weight:600;font-size:.9rem">{{ partenaire.nom_agence }}</div>
+              <div style="font-size:.78rem;color:#888">{{ partenaire.ville }}</div>
+            </div>
+          </div>
+          {% endif %}
+          <input type="file" name="logo" accept="image/*">
+          <small style="color:#888;font-size:.78rem;display:block;margin-top:4px">Logo affiché sur vos annonces (JPG ou PNG)</small>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top:10px"><i class="fas fa-save"></i> Enregistrer</button>
+      </form>
+    </div>
+{% endblock %}

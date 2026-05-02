@@ -1,0 +1,43 @@
+{% extends "gestion/base_admin.html" %}
+{% block title %}{% if partenaire %}Modifier{% else %}Créer{% endif %} un partenaire{% endblock %}
+{% block page_title %}<i class="fas fa-{% if partenaire %}edit{% else %}plus{% endif %}"></i> {% if partenaire %}Modifier{% else %}Créer{% endif %} un partenaire{% endblock %}
+{% block topbar_right %}<a href="{% url 'gestion_partenaires' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour</a>{% endblock %}
+{% block content %}
+    <div class="card" style="max-width:700px">
+      {% if erreur %}<div class="erreur-msg">{{ erreur }}</div>{% endif %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-groupe"><label>Nom de l'agence *</label><input type="text" name="nom_agence" value="{{ partenaire.nom_agence|default:'' }}" required></div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Prénom responsable *</label><input type="text" name="prenom_responsable" value="{{ partenaire.prenom_responsable|default:'' }}" required></div>
+          <div class="form-groupe"><label>Nom responsable *</label><input type="text" name="nom_responsable" value="{{ partenaire.nom_responsable|default:'' }}" required></div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Email *</label><input type="email" name="email" value="{{ partenaire.email|default:'' }}" required></div>
+          <div class="form-groupe"><label>Téléphone *</label><input type="tel" name="telephone" value="{{ partenaire.telephone|default:'' }}" required></div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Ville *</label><input type="text" name="ville" value="{{ partenaire.ville|default:'' }}" required></div>
+          <div class="form-groupe"><label>Adresse *</label><input type="text" name="adresse" value="{{ partenaire.adresse|default:'' }}" required></div>
+        </div>
+        <div class="form-groupe"><label>{% if partenaire %}Nouveau mot de passe (vide = inchangé){% else %}Mot de passe *{% endif %}</label><input type="password" name="mot_de_passe" {% if not partenaire %}required{% endif %}></div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Logo</label><input type="file" name="logo" accept="image/*"></div>
+          <div class="form-groupe"><label>Document justificatif</label><input type="file" name="document_justificatif"></div>
+        </div>
+        {% if partenaire %}
+        <div class="form-groupe"><label>Statut</label>
+          <select name="statut">
+            <option value="en_attente" {% if partenaire.statut == 'en_attente' %}selected{% endif %}>En attente</option>
+            <option value="actif" {% if partenaire.statut == 'actif' %}selected{% endif %}>Actif</option>
+            <option value="suspendu" {% if partenaire.statut == 'suspendu' %}selected{% endif %}>Suspendu</option>
+          </select>
+        </div>
+        {% endif %}
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+          <a href="{% url 'gestion_partenaires' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+      </form>
+    </div>
+{% endblock %}

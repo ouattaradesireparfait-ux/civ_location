@@ -1,0 +1,48 @@
+{% extends "gestion/base_admin.html" %}
+{% block title %}Tableau de bord Gestionnaire — CIV Location{% endblock %}
+{% block page_title %}<i class="fas fa-tachometer-alt"></i> Tableau de bord{% endblock %}
+{% block extra_style %}.stats{grid-template-columns:repeat(3,1fr)}{% endblock %}
+{% block content %}
+    <div class="stats">
+      <div class="stat-card orange"><div class="stat-num">{{ stats.reservations_attente }}</div><div class="stat-label">Réservations en attente</div></div>
+      <div class="stat-card bleu"><div class="stat-num">{{ stats.annonces_attente }}</div><div class="stat-label">Annonces à valider</div></div>
+      <div class="stat-card violet"><div class="stat-num">{{ stats.reservations_total }}</div><div class="stat-label">Réservations totales</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="fas fa-clock"></i> Réservations en attente</div>
+      {% if reservations_attente %}
+      <table>
+        <thead><tr><th>#</th><th>Client</th><th>Véhicule</th><th>Dates</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for r in reservations_attente %}
+        <tr>
+          <td>#{{ r.pk }}</td>
+          <td>{{ r.prenom }} {{ r.nom }}</td>
+          <td>{{ r.vehicule.marque }} {{ r.vehicule.modele }}</td>
+          <td>{{ r.date_debut|date:"d/m/Y" }} → {{ r.date_fin|date:"d/m/Y" }}</td>
+          <td><a href="{% url 'gestion_reservation_detail' r.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Traiter</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}<div class="empty">Aucune réservation en attente</div>{% endif %}
+    </div>
+    <div class="section">
+      <div class="section-title"><i class="fas fa-car"></i> Annonces en attente</div>
+      {% if annonces_attente %}
+      <table>
+        <thead><tr><th>Véhicule</th><th>Partenaire</th><th>Prix/jour</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for v in annonces_attente %}
+        <tr>
+          <td>{{ v.marque }} {{ v.modele }} {{ v.annee }}</td>
+          <td>{{ v.partenaire.nom_agence }}</td>
+          <td>{{ v.prix_par_jour|floatformat:0 }} FCFA</td>
+          <td><a href="{% url 'gestion_annonce_detail' v.pk %}" class="btn btn-sm btn-info"><i class="fas fa-eye"></i> Traiter</a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}<div class="empty">Aucune annonce en attente</div>{% endif %}
+    </div>
+{% endblock %}

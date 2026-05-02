@@ -1,0 +1,57 @@
+{% extends "gestion/base_admin.html" %}
+{% block title %}Réservation #{{ reservation.pk }}{% endblock %}
+{% block page_title %}<i class="fas fa-calendar-alt"></i> Réservation #{{ reservation.pk }}{% endblock %}
+{% block topbar_right %}<a href="{% url 'gestion_reservations' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour</a>{% endblock %}
+{% block content %}
+    {% if messages %}{% for m in messages %}<div class="succes-msg">{{ m }}</div>{% endfor %}{% endif %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-user"></i> Informations client</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Prénom & Nom</div><div class="detail-val">{{ reservation.prenom }} {{ reservation.nom }}</div></div>
+        <div class="detail-item"><div class="detail-label">Email</div><div class="detail-val">{{ reservation.email }}</div></div>
+        <div class="detail-item"><div class="detail-label">Téléphone</div><div class="detail-val">{{ reservation.telephone }}</div></div>
+        <div class="detail-item"><div class="detail-label">Statut</div><div class="detail-val"><span class="badge badge-{{ reservation.statut }}">{{ reservation.get_statut_display }}</span></div></div>
+        <div class="detail-item"><div class="detail-label">Date de demande</div><div class="detail-val">{{ reservation.date_demande|date:"d/m/Y H:i" }}</div></div>
+        <div class="detail-item"><div class="detail-label">Paiement</div><div class="detail-val">{{ reservation.get_moyen_paiement_display }}</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-car"></i> Véhicule</div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Véhicule</div><div class="detail-val">{{ reservation.vehicule.marque }} {{ reservation.vehicule.modele }} {{ reservation.vehicule.annee }}</div></div>
+        <div class="detail-item"><div class="detail-label">Agence</div><div class="detail-val">{{ reservation.vehicule.partenaire.nom_agence }}</div></div>
+        <div class="detail-item"><div class="detail-label">Date début</div><div class="detail-val">{{ reservation.date_debut|date:"d/m/Y" }}</div></div>
+        <div class="detail-item"><div class="detail-label">Date fin</div><div class="detail-val">{{ reservation.date_fin|date:"d/m/Y" }}</div></div>
+        <div class="detail-item"><div class="detail-label">Lieu de prise en charge</div><div class="detail-val"><i class="fas fa-map-marker-alt" style="color:#f39c12"></i> {{ reservation.lieu_prise_en_charge }}</div></div>
+        <div class="detail-item"><div class="detail-label">Durée</div><div class="detail-val">{{ reservation.nombre_jours }} jour(s)</div></div>
+        <div class="detail-item"><div class="detail-label">Prix total estimé</div><div class="detail-val" style="color:#f39c12;font-weight:800">{{ reservation.prix_total|floatformat:0 }} FCFA</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-id-card"></i> Documents (usage interne uniquement)</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div><div class="detail-label">CNI Recto</div><a href="{{ reservation.cni_recto.url }}" target="_blank"><img src="{{ reservation.cni_recto.url }}" class="photo-doc"></a></div>
+        <div><div class="detail-label">CNI Verso</div><a href="{{ reservation.cni_verso.url }}" target="_blank"><img src="{{ reservation.cni_verso.url }}" class="photo-doc"></a></div>
+        <div><div class="detail-label">Permis de conduire</div><a href="{{ reservation.permis_conduire.url }}" target="_blank"><img src="{{ reservation.permis_conduire.url }}" class="photo-doc"></a></div>
+      </div>
+    </div>
+    {% if reservation.motif_refus %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-comment-slash"></i> Motif de refus (interne)</div>
+      <div class="alerte-danger">{{ reservation.motif_refus }}</div>
+    </div>
+    {% endif %}
+    {% if reservation.statut == 'en_attente' %}
+    <div class="card">
+      <div class="card-title"><i class="fas fa-gavel"></i> Traitement</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+        <form method="post" action="{% url 'gestion_reservation_valider' reservation.pk %}">{% csrf_token %}<button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Valider la réservation</button></form>
+      </div>
+      <form method="post" action="{% url 'gestion_reservation_refuser' reservation.pk %}">
+        {% csrf_token %}
+        <div class="form-groupe"><label>Motif de refus (usage interne uniquement) *</label><textarea name="motif_refus" required placeholder="Expliquez la raison du refus..." style="min-height:80px;resize:vertical"></textarea></div>
+        <button type="submit" class="btn btn-danger"><i class="fas fa-times"></i> Refuser la réservation</button>
+      </form>
+    </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "partenaire/base_partenaire.html" %}
+{% block title %}{% if vehicule %}Modifier{% else %}Publier{% endif %} un véhicule{% endblock %}
+{% block page_title %}<i class="fas fa-{% if vehicule %}edit{% else %}plus{% endif %}"></i> {% if vehicule %}Modifier{% else %}Publier{% endif %} un véhicule{% endblock %}
+{% block topbar_right %}<a href="{% url 'partenaire_annonces' %}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Retour</a>{% endblock %}
+{% block content %}
+    <div class="card" style="max-width:700px">
+      {% if erreur %}<div class="erreur-msg">{{ erreur }}</div>{% endif %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Marque *</label><input type="text" name="marque" value="{{ vehicule.marque|default:'' }}" required placeholder="Ex: Toyota"></div>
+          <div class="form-groupe"><label>Modèle *</label><input type="text" name="modele" value="{{ vehicule.modele|default:'' }}" required placeholder="Ex: Corolla"></div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Année *</label><input type="number" name="annee" value="{{ vehicule.annee|default:'' }}" required min="1990" max="2030"></div>
+          <div class="form-groupe"><label>Couleur *</label><input type="text" name="couleur" value="{{ vehicule.couleur|default:'' }}" required placeholder="Ex: Blanc"></div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Type de véhicule *</label>
+            <select name="type_vehicule" required>
+              <option value="">Sélectionner...</option>
+              {% for val,lib in types %}<option value="{{ val }}" {% if vehicule.type_vehicule == val %}selected{% endif %}>{{ lib }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="form-groupe"><label>Nombre de places *</label><input type="number" name="nombre_places" value="{{ vehicule.nombre_places|default:'' }}" required min="1" max="50"></div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Transmission *</label>
+            <select name="transmission" required>
+              <option value="manuelle" {% if vehicule.transmission == 'manuelle' %}selected{% endif %}>Manuelle</option>
+              <option value="automatique" {% if vehicule.transmission == 'automatique' %}selected{% endif %}>Automatique</option>
+            </select>
+          </div>
+          <div class="form-groupe"><label>Climatisation</label>
+            <select name="climatisation">
+              <option value="1" {% if not vehicule or vehicule.climatisation %}selected{% endif %}>Oui</option>
+              <option value="0" {% if vehicule and not vehicule.climatisation %}selected{% endif %}>Non</option>
+            </select>
+          </div>
+        </div>
+        <div class="deux-cols">
+          <div class="form-groupe"><label>Prix par jour (FCFA) *</label><input type="number" name="prix_par_jour" value="{{ vehicule.prix_par_jour|default:'' }}" required min="0"></div>
+          <div class="form-groupe"><label>Localisation *</label><input type="text" name="localisation" value="{{ vehicule.localisation|default:'' }}" required placeholder="Ex: Cocody, Abidjan"></div>
+        </div>
+        <div class="form-groupe"><label>Disponible</label>
+          <select name="disponible">
+            <option value="1" {% if not vehicule or vehicule.disponible %}selected{% endif %}>Oui</option>
+            <option value="0" {% if vehicule and not vehicule.disponible %}selected{% endif %}>Non</option>
+          </select>
+        </div>
+        <div class="form-groupe"><label>Description</label><textarea name="description" style="min-height:80px;resize:vertical" placeholder="Décrivez le véhicule...">{{ vehicule.description|default:'' }}</textarea></div>
+        <div class="form-groupe">
+          <label>Photos du véhicule</label>
+          <div class="upload-zone" onclick="document.getElementById('photos').click()">
+            <i class="fas fa-images"></i>
+            <p>Cliquez pour ajouter des photos (plusieurs sélections possibles)</p>
+            <input type="file" id="photos" name="photos" accept="image/*" multiple onchange="previewPhotos(this)">
+          </div>
+          <div id="preview-container" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+          {% if vehicule %}
+          <div style="margin-top:10px">
+            <small style="color:#888">Photos actuelles :</small>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px">
+              {% for p in vehicule.photos.all %}<img src="{{ p.image.url }}" style="height:70px;width:100px;object-fit:cover;border-radius:6px;border:1px solid #ddd">{% endfor %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div style="display:flex;gap:12px;margin-top:18px">
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+          <a href="{% url 'partenaire_annonces' %}" class="btn btn-secondary">Annuler</a>
+        </div>
+      </form>
+    </div>
+{% endblock %}
+{% block extra_script %}
+<script>
+function previewPhotos(input){
+  const container=document.getElementById('preview-container');
+  container.innerHTML='';
+  for(const f of input.files){
+    const r=new FileReader();
+    r.onload=e=>{const img=document.createElement('img');img.src=e.target.result;img.style.cssText='height:70px;width:100px;object-fit:cover;border-radius:6px;border:1px solid #ddd';container.appendChild(img)};
+    r.readAsDataURL(f);
+  }
+}
+</script>
+{% endblock %}

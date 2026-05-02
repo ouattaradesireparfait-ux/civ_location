@@ -1,0 +1,25 @@
+{% extends "partenaire/base_partenaire.html" %}
+{% block title %}Mes réservations — Partenaire{% endblock %}
+{% block page_title %}<i class="fas fa-calendar-alt"></i> Mes réservations{% endblock %}
+{% block content %}
+    <div class="card">
+      <table>
+        <thead><tr><th>#</th><th>Client</th><th>Véhicule</th><th>Dates</th><th>Durée</th><th>Statut</th><th>Date demande</th></tr></thead>
+        <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td>#{{ r.pk }}</td>
+          <td>{{ r.prenom }} {{ r.nom }}</td>
+          <td>{{ r.vehicule.marque }} {{ r.vehicule.modele }}</td>
+          <td>{{ r.date_debut|date:"d/m/Y" }}<br>{{ r.date_fin|date:"d/m/Y" }}</td>
+          <td>{{ r.nombre_jours }} j</td>
+          <td><span class="badge badge-{{ r.statut }}">{{ r.get_statut_display }}</span></td>
+          <td>{{ r.date_demande|date:"d/m/Y" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7"><div class="empty">Aucune réservation reçue</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endblock %}

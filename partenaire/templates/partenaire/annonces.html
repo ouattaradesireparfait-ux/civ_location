@@ -1,0 +1,47 @@
+{% extends "partenaire/base_partenaire.html" %}
+{% block title %}Mes annonces — Partenaire{% endblock %}
+{% block page_title %}<i class="fas fa-car"></i> Mes annonces{% endblock %}
+{% block topbar_right %}<a href="{% url 'partenaire_annonce_ajouter' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Publier un véhicule</a>{% endblock %}
+{% block content %}
+    {% if messages %}{% for m in messages %}<div class="succes-msg">{{ m }}</div>{% endfor %}{% endif %}
+    <div class="card">
+      <table>
+        <thead><tr><th>Véhicule</th><th>Type</th><th>Prix/j</th><th>Localisation</th><th>Statut</th><th>Vues</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for v in vehicules %}
+        <tr>
+          <td><strong>{{ v.marque }} {{ v.modele }} {{ v.annee }}</strong></td>
+          <td>{{ v.get_type_vehicule_display }}</td>
+          <td>{{ v.prix_par_jour|floatformat:0 }} FCFA</td>
+          <td>{{ v.localisation }}</td>
+          <td><span class="badge badge-{{ v.statut_validation }}">{{ v.get_statut_validation_display }}</span></td>
+          <td>{{ v.vues }}</td>
+          <td style="display:flex;gap:6px">
+            <a href="{% url 'partenaire_annonce_modifier' v.pk %}" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a>
+            <button onclick="confirmerSuppression('{% url 'partenaire_annonce_supprimer' v.pk %}','{{ v.marque }} {{ v.modele }}')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7"><div class="empty">Aucun véhicule publié — <a href="{% url 'partenaire_annonce_ajouter' %}" style="color:#f39c12">Commencez maintenant</a></div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-overlay" id="modal-suppr">
+      <div class="modal">
+        <h3><i class="fas fa-exclamation-triangle" style="color:#e74c3c"></i> Supprimer l'annonce</h3>
+        <p>Voulez-vous vraiment supprimer <strong id="modal-nom"></strong> ?<br><br><em>Cette action est irréversible.</em></p>
+        <div class="modal-btns">
+          <a href="#" id="modal-confirm" class="btn btn-danger">Supprimer</a>
+          <button onclick="fermerModal()" class="btn btn-secondary">Annuler</button>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+{% block extra_script %}
+<script>
+function confirmerSuppression(url,nom){document.getElementById('modal-nom').textContent=nom;document.getElementById('modal-confirm').href=url;document.getElementById('modal-suppr').classList.add('show')}
+function fermerModal(){document.getElementById('modal-suppr').classList.remove('show')}
+document.getElementById('modal-suppr').addEventListener('click',function(e){if(e.target===this)fermerModal()})
+</script>
+{% endblock %}
